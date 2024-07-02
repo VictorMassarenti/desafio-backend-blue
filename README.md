@@ -1,52 +1,78 @@
-# Desafio de Backend - API de Marcação de Consultas
+# Instruções de instalação e execução do projeto
 
-Bem-vindo ao desafio de backend da Blue Health Tech! Este desafio é uma oportunidade para demonstrar suas habilidades de desenvolvimento de API, compreensão de conceitos de backend, e capacidade de aplicar boas práticas de engenharia de software.
+Para instalar e executar o projeto, siga as etapas abaixo:
 
-## Objetivo
+1. Certifique-se de ter o [Node.js](https://nodejs.org) instalado em sua máquina.
+2. Faça o clone deste repositório para o seu ambiente local.
+3. Navegue até o diretório raiz do projeto.
+4. Modifique o `.env.example` para `.env`.
+5. Certifique-se de passar uma `DATABASE_URL` válida na variável de ambiente.
+6. Abra um terminal e execute o comando `yarn` para instalar as dependências do projeto.
+7. Execute o comando `npx prisma migrate dev` isso garantirá que a estrutura do banco de dados esteja atualizada com o schema do prisma.
+8. Após a conclusão dos passos anteriores, execute o comando `yarn dev` para iniciar o servidor em modo de desenvolvimento.
+9. O servidor estará disponível em `http://localhost:8080` ou na porta preenchida nas variáveis de ambiente `API_PORT`.
 
-Desenvolver uma API RESTful para a marcação de consultas médicas. A API permitirá que usuários façam login, agendem consultas, visualizem detalhes de suas consultas em PDF, e modifiquem ou cancelem essas consultas.
+_Visualize [aqui](https://prisma-editor.vercel.app/schema/6994) uma prévia da estrutura do banco de dados_
 
-## Requisitos do Desafio
+# Descrição das tecnologias utilizadas
 
-- **Autenticação:** Implemente o login de usuários utilizando JWT.
-- **Agendamento de Consultas:** Permita que os usuários agendem novas consultas.
-- **Geração de PDF:** Após agendar uma consulta, gere um PDF com os detalhes da consulta.
-- **Visualização de Consultas:** Permita que os usuários vejam informações detalhadas sobre suas consultas, a rota deve ser criptografada com um link de acesso único.
-- **Modificação e Cancelamento de Consultas:** Os usuários devem poder modificar detalhes de suas consultas ou cancelá-las.
+Este projeto utiliza as seguintes tecnologias:
 
-## Critérios Técnicos
+- Node.js: plataforma de desenvolvimento JavaScript do lado do servidor.
+- Express.js: framework web para construção de APIs RESTful.
+- Prisma: Ferramenta ORM para modelagem de banco de dados, migrações e mais.
+- Typescript: Linguagem de programação que é um superset de JavaScript, adicionando tipos estáticos.
+- bcrypt: Uma biblioteca para ajudar na criptografia de senhas.
+- dotenv: Carrega variáveis de ambiente de um arquivo .env para process.env.
+- jsonwebtoken: Implementação de JSON Web Tokens para Node.js.
+- pdfkit: Um kit de ferramentas para geração de PDFs em Node.js e no navegador.
+- zod: Uma biblioteca de validação de dados TypeScript-first.
+- ts-node: Ferramenta para execução de TypeScript diretamente, sem necessidade de compilação prévia.
 
-- **Banco de Dados:** Use alguma ferramenta para gerenciamento do banco de dados.
-- **Arquitetura:** Siga o padrão MVC para estruturação do projeto. 
-- **Linguagens permitidas:** PHP + Symphony |  Node Js + Express.
-- **Tratamento de Erros:** Implemente um sistema de tratamento de erros eficaz.
+# Lista de rotas disponíveis e como utilizá-las
 
-## Entregáveis
+A seguir, estão listadas as rotas disponíveis neste projeto e exemplos de requisição:
 
-- Código-fonte no GitHub com acesso ao repositório fornecido pela equipe da Blue.
-- Documentação no README, detalhando:
-  - Instruções de instalação e execução do projeto.
-  - Descrição das tecnologias utilizadas.
-  - Lista de rotas disponíveis e como utilizá-las.
+- `/api/users/login` (POST): Rota para login e autenticação, retorna um token válido.
 
-## Avaliação
+  ```json
+  {
+    "username": "exemplo",
+    "password": "exemplo-senha"
+  }
+  ```
 
-O desafio será avaliado com base em:
+- `/api/users/register` (POST): Rota para registro de usuário no sistema.
 
-- **Qualidade do Código:** Clareza, uso de boas práticas, padrões de projeto e segurança.
-- **Funcionalidade:** Todos os requisitos devem ser atendidos.
-- **Design da API:** Clareza, consistência, e aderência aos princípios RESTful.
-- **Documentação:** Completa e clara, facilitando a compreensão e uso da API.
+  ```json
+  {
+    "username": "exemplo",
+    "password": "exemplo-senha"
+  }
+  ```
 
-## Como Iniciar
+---
 
-1. Faça um fork deste repositório.
-2. Clone seu fork para sua máquina local.
-3. Siga as instruções de instalação específicas para configurar o ambiente de desenvolvimento.
-4. Comece a desenvolver, seguindo os requisitos e critérios técnicos descritos acima.
+### Rotas protegidas abaixo (Necessária autenticação Bearer Token)
 
-## Entrega
+- `/api/appointment` (POST): Cria um novo agendamento e gera um arquivo .pdf na pasta "PDF" localizada na raiz do projeto. Requer validação dos dados. Retornar o
 
-Quando estiver pronto para submeter seu desafio, crie um Pull Request do seu repositório forkado para o repositório principal da Blue Company. A equipe de desenvolvimento revisará sua entrega.
+  ```json
+  {
+    "date": "2023-04-12T17:00:00Z"
+  }
+  ```
 
-Boa sorte e estamos ansiosos para ver suas soluções inovadoras!
+- `/api/appointment/:id` (GET): Obtém os detalhes de um agendamento específico pelo ID.
+- `/api/appointment/:id` (PATCH): Atualiza um agendamento existente pelo ID. Requer validação dos dados de atualização.
+
+  ```json
+  {
+    "date": "2024-01-22T09:00:00Z"
+  }
+  ```
+
+- `/api/appointment/:id` (DELETE): Cancela um agendamento existente pelo ID. Apesar de ser um método 'delete' optei
+  por não excluir os registros da consulta no banco de dados, e apenas mudar o status para false, representando um cancelamento.
+
+Para utilizar essas rotas, você pode utilizar uma ferramenta como o [Postman](https://www.postman.com/) ou enviar requisições HTTP diretamente para o servidor.
